@@ -52,7 +52,7 @@ public class SecurityConfig {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers("/healthcheck","/mensajeGi");
+		return (web) -> web.ignoring().requestMatchers("/healthcheck","/mensajeGi","prueba");
 	}
 	@Bean
 	public JwtAuthFilter jwtAuth() {

@@ -162,7 +162,7 @@ public class BackendDesarrolloDeApps2EcomerceApplication {
         String resp = "";
         //Comienza a consumir utilizando un hilo secundario
         //consumer.consume(consumerConnection, Modules.E_COMMERCE);
-        //Utilidades.enviarMensaje("Hola",Modules.E_COMMERCE, "Prueba","");
+       //Utilidades.enviarMensaje("Hola",Modules.E_COMMERCE, "Prueba","");
         //Utilidades.registerInterno(broker,"ulises","ulirodrigueze@gmail.com","123admin","Ulises","Rodriguez");
 
     }

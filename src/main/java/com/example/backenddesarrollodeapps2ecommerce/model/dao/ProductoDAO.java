@@ -1,5 +1,7 @@
 package com.example.backenddesarrollodeapps2ecommerce.model.dao;
 
+import com.example.backenddesarrollodeapps2ecommerce.model.entities.BalanceEntity;
+import com.example.backenddesarrollodeapps2ecommerce.model.entities.CompraEntity;
 import com.example.backenddesarrollodeapps2ecommerce.model.entities.ProductoEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 @Repository
 public class ProductoDAO{
@@ -17,6 +21,10 @@ public class ProductoDAO{
     private EntityManager em;
     @Autowired
     IProductoDAOBase daoBase;
+    @Autowired
+    BalanceDAO balanceDAO;
+    @Autowired
+    ComprasDAO comprasDAO;
     @Transactional
     public List<ProductoEntity> findAll(int page, int pageSize) {
         int PAGESIZE =(int) daoBase.count(); //CAMBIAR PARA PAGINACION
@@ -73,7 +81,18 @@ public class ProductoDAO{
         if(nuevoProd.getStockActual() != null)
         {
             if(prodDB.getStockActual() < nuevoProd.getStockActual()) {
-                // Realizar la orden de compra
+                CompraEntity compra = new CompraEntity();
+                int cantidad = nuevoProd.getStockActual() - prodDB.getStockActual();
+                compra.setIdProducto(prodDB.getIdProducto());
+                compra.setFechaOrden(LocalDate.now());
+                compra.setCantidadDeUnidades(cantidad);
+                compra.setMontoTotal(nuevoProd.getPrecioCompra() * cantidad);
+                compra.setNombreUsuario("luka");
+                BalanceEntity balance = balanceDAO.getBalance();
+                session.persist(compra);
+                balance.setMontoCompras(balance.getMontoCompras() + compra.getMontoTotal());
+                session.persist(balance);
+
             }
             //CUANDO HAGAMOS LA ORDEN DE COMPRA ESTO HAY QUE SACARLO DE ACÁ
             prodDB.setStockActual(nuevoProd.getStockActual());
@@ -114,5 +133,18 @@ public class ProductoDAO{
         if(prod == null)
             throw new EmptyResultDataAccessException("El producto no existe",1);
         sesionActual.remove(prod);
+    }
+    private void registrarCompra(ProductoEntity nuevoProd,ProductoEntity prodDB,Session session){
+        CompraEntity compra = new CompraEntity();
+        int cantidad = nuevoProd.getStockActual() - prodDB.getStockActual();
+        compra.setIdProducto(prodDB.getIdProducto());
+        compra.setFechaOrden(LocalDate.now());
+        compra.setCantidadDeUnidades(cantidad);
+        compra.setMontoTotal(nuevoProd.getPrecioCompra() * cantidad);
+        compra.setNombreUsuario("luka");
+        BalanceEntity balance = balanceDAO.getBalance();
+        session.persist(compra);
+        balance.setMontoCompras(balance.getMontoCompras() + compra.getMontoTotal());
+        session.persist(balance);
     }
 }
