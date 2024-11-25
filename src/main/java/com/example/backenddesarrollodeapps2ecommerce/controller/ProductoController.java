@@ -1,5 +1,6 @@
 package com.example.backenddesarrollodeapps2ecommerce.controller;
 
+import com.example.backenddesarrollodeapps2ecommerce.config.JwtAuthFilter;
 import com.example.backenddesarrollodeapps2ecommerce.model.entities.ProductoEntity;
 import com.example.backenddesarrollodeapps2ecommerce.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ public class ProductoController {
 
     @Autowired
     ProductoService prodService;
+    @Autowired
+    JwtAuthFilter jwt;
 
     @PostMapping("/productos")
     public ResponseEntity<?> productPost(@RequestBody ProductoEntity product) {
@@ -72,7 +75,7 @@ public class ProductoController {
     @PutMapping ("/productos/{idProd}")
     public ResponseEntity<?> productUpdate(@RequestBody ProductoEntity modificado, @PathVariable long idProd) {
         try {
-            prodService.update(modificado,idProd);  
+            prodService.update(modificado,idProd,jwt.getUsername());
             return new ResponseEntity<>(new Mensaje("Producto modificado con exito"), HttpStatus.OK);
         } catch (Throwable e) {
             return new ResponseEntity<>(new Mensaje("Error interno"), HttpStatus.NOT_ACCEPTABLE);

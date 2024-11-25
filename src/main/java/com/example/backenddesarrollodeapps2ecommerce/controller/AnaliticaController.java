@@ -1,5 +1,6 @@
 package com.example.backenddesarrollodeapps2ecommerce.controller;
 import ar.edu.uade.*;
+import com.example.backenddesarrollodeapps2ecommerce.config.JwtAuthFilter;
 import com.example.backenddesarrollodeapps2ecommerce.core.dtos.Utilidades;
 import com.example.backenddesarrollodeapps2ecommerce.model.entities.BalanceEntity;
 import com.example.backenddesarrollodeapps2ecommerce.model.entities.CompraEntity;
@@ -25,6 +26,7 @@ public class AnaliticaController {
     ComprasService comprasService;
     @Autowired
     BalanceService balanceService;
+
     @GetMapping("/ventas")
     public ResponseEntity<?> ventasGetAll(/*@PathVariable int page*/) {
         try {

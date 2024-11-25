@@ -53,6 +53,21 @@ public class AuthController {
 
         return new ResponseEntity<>(new Token(token), HttpStatus.OK);
     }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UsuarioEntity user) {
+        try{
+
+            Utilidades.registerInterno(user);
+        }
+        catch (EmptyResultDataAccessException e){
+            return new ResponseEntity<>(new Mensaje("Username incorrecto"), HttpStatus.UNAUTHORIZED);
+        }
+        catch (Throwable e){
+            return new ResponseEntity<>(new Mensaje("Error interno"), HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity<>(new Mensaje("Registrado"), HttpStatus.OK);
+
+    }
     @PostMapping("/prueba")
     public ResponseEntity<?> mensajeGI(@RequestBody String username) {
 

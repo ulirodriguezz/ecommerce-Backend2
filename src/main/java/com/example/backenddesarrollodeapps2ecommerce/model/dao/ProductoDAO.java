@@ -13,7 +13,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 @Repository
 public class ProductoDAO{
@@ -55,7 +54,7 @@ public class ProductoDAO{
 
     }
     @Transactional
-    public void update(ProductoEntity nuevoProd, long idProd)
+    public void update(ProductoEntity nuevoProd, long idProd, String username)
     {
         Session session = em.unwrap(Session.class);
 
@@ -87,7 +86,7 @@ public class ProductoDAO{
                 compra.setFechaOrden(LocalDate.now());
                 compra.setCantidadDeUnidades(cantidad);
                 compra.setMontoTotal(nuevoProd.getPrecioCompra() * cantidad);
-                compra.setNombreUsuario("luka");
+                compra.setNombreUsuario(username);
                 BalanceEntity balance = balanceDAO.getBalance();
                 session.persist(compra);
                 balance.setMontoCompras(balance.getMontoCompras() + compra.getMontoTotal());

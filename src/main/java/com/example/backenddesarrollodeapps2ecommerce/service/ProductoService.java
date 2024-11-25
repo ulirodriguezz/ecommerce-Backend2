@@ -35,10 +35,10 @@ public class ProductoService {
             throw new Error("Ocurrio un error");
         }
     }
-    public void update(ProductoEntity producto, long idProducto)
+    public void update(ProductoEntity producto, long idProducto, String username)
     {
         try{
-            this.prodDAO.update(producto,idProducto);
+            this.prodDAO.update(producto,idProducto,username);
         }catch (Throwable e){
             e.printStackTrace();
             throw new Error("Ocurrió un error");

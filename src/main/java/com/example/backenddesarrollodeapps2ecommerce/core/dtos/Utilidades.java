@@ -3,6 +3,7 @@ package com.example.backenddesarrollodeapps2ecommerce.core.dtos;
 import ar.edu.uade.*;
 import com.example.backenddesarrollodeapps2ecommerce.model.dao.LogDAO;
 import com.example.backenddesarrollodeapps2ecommerce.model.entities.LogEntity;
+import com.example.backenddesarrollodeapps2ecommerce.model.entities.UsuarioEntity;
 import com.rabbitmq.client.Connection;
 import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,12 @@ import java.lang.reflect.Type;
 public final class Utilidades {
 
     private static String USER = "{ user : e_commerce, password : 8^3&927#!q4W&649^% }";
+    private static final Broker broker = new Broker(
+            "3.141.117.124",
+                    5672,
+                    "e_commerce",
+                    "8^3&927#!q4W&649^%");
+
 
     public static void enviarMensaje(Broker broker, String mensaje, Modules moduloPublisher, Modules moduloDestino, String usecase, String target) throws Exception {
 
@@ -136,19 +143,21 @@ public final class Utilidades {
         broker.endConnection(connection);
         return response;
     }
-    public static void registerInterno(Broker broker, String username, String email, String password, String nombre, String apellido){
-        username = "\""+username+"\"";
-        email = "\""+email+"\"";
-        password = "\""+password+"\"";
-        nombre = "\""+nombre+"\"";
-        apellido = "\""+apellido+"\"";
+
+    public static void registerInterno(UsuarioEntity user){
+
+        String username = "\""+user.getNombreUsuario()+"\"";
+        String email = "\""+username+"@gmail.com"+"\"";
+        String password = "\""+user.getPassword()+"\"";
+        String nombre = "\""+user.getNombreUsuario()+"\"";
+        String apellido = "\""+"-"+"\"";
 
         String json = "{\"user\" : "+username+ "," +
                 " \"password\" : "+password+"," +
                 " \"nombre\": "+nombre+"," +
                 " \"apellido\" : "+apellido+"," +
                 "\"email\" : " +email+","+
-                "  \"case\": \"login\"," +
+                "  \"case\": \"register\"," +
                 " \"origin\": \"e_commerce\"}";
         String response = "";
         Connection connection ;
@@ -174,5 +183,16 @@ public final class Utilidades {
         LogEntity log = new LogEntity();
         log.setMensaje(mensaje);
         logDAO.save(log);
+    }
+
+    public static boolean loggearUsuario(UsuarioEntity user) {
+        Broker broker = new Broker(
+                "3.141.117.124",
+                5672,
+                "e_commerce",
+                "8^3&927#!q4W&649^%"
+        );
+        String response = logingInterno(broker,user.getNombreUsuario(), user.getPassword());
+        return response.contentEquals("");
     }
 }
