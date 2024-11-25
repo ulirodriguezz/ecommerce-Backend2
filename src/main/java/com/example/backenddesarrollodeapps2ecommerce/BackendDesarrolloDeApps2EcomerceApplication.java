@@ -89,7 +89,13 @@ public class BackendDesarrolloDeApps2EcomerceApplication {
                             //El mensaje es una venta para registrar
                             try{
                                 logMsj = logMsj + "UC_Venta -";
-                                VentaEntity venta = Utilities.convertBody(body, VentaEntity.class);
+                                VentaDTO dto = Utilities.convertBody(body, VentaDTO.class);
+                                VentaEntity venta = new VentaEntity();
+                                venta.setMontoTotal(dto.getMontoTotal());
+                                venta.setProductos(dto.getProductos());
+                                venta.setNombreUsuario(dto.getNombreUsuario());
+                                venta.setCantidadDeProductos(dto.getCantidadDeProductos());
+                                venta.setFecha(dto.getFecha());
                                 logMsj = logMsj+"Venta_OK1";
                                 ventasService.save(venta);
                                 logMsj = logMsj+"Venta_OK2";
@@ -167,7 +173,6 @@ public class BackendDesarrolloDeApps2EcomerceApplication {
             }
         });
 
-        String resp = "";
         //Comienza a consumir utilizando un hilo secundario
         consumer.consume(consumerConnection, Modules.E_COMMERCE);
         //Utilidades.registerInterno(broker,"ulises","ulirodrigueze@gmail.com","123admin","Ulises","Rodriguez");

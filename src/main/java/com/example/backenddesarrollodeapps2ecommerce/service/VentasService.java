@@ -64,7 +64,7 @@ public class VentasService {
         }catch (Throwable e){
 
             e.printStackTrace();
-            throw new Error(e.getMessage());
+            throw new Error("Error en service");
         }
 
     }
