@@ -35,6 +35,7 @@ public class BackendDesarrolloDeApps2EcomerceApplication {
         ApplicationContext applicationContext = SpringApplication.run(BackendDesarrolloDeApps2EcomerceApplication.class, args);
         final VentasService ventasService = applicationContext.getBean(VentasService.class);
         final ManejadorDeSesiones manejadosDeSesiones = applicationContext.getBean(ManejadorDeSesiones.class);
+        final LogDAO logDAO = applicationContext.getBean(LogDAO.class);
         Broker broker = new Broker(
                 "3.141.117.124",
                5672,
@@ -82,16 +83,23 @@ public class BackendDesarrolloDeApps2EcomerceApplication {
 
                     if(body.getOrigin().contentEquals(Modules.USUARIO.toString().toLowerCase())){
                         //Llega un mensaje desde el modulo usuarios
-
+                        String logMsj = "L.M.U -";
+                        LogEntity log = new LogEntity();
                         if(body.getUseCase().contentEquals("Venta")){
                             //El mensaje es una venta para registrar
                             try{
+                                logMsj = logMsj + "UC_Venta -";
                                 VentaEntity venta = Utilities.convertBody(body, VentaEntity.class);
+                                logMsj = logMsj+"Venta_OK1";
                                 ventasService.save(venta);
+                                logMsj = logMsj+"Venta_OK2";
                             }catch (Exception e){
                                 e.printStackTrace();
+                                logMsj = logMsj+"Venta_Error";
                                 System.out.println("No se pudo convertir");
                             }
+                            log.setMensaje(logMsj);
+                            logDAO.save(log);
                         }
                         if(body.getUseCase().contentEquals("Productos")){
                             //Se está solicitando el listado de productos
@@ -119,7 +127,7 @@ public class BackendDesarrolloDeApps2EcomerceApplication {
                             System.out.println("Username: "+ payload);
                             List<String> mensajes = new ArrayList<>();
                             List<VentaEntity> pedidos = new ArrayList<>();
-                            String username = "";
+                            String username = payload;
                             try {
                                pedidos = ventasService.getVentasByUsername(payload);
                             }catch (EmptyResultDataAccessException e){
@@ -162,7 +170,6 @@ public class BackendDesarrolloDeApps2EcomerceApplication {
         String resp = "";
         //Comienza a consumir utilizando un hilo secundario
         consumer.consume(consumerConnection, Modules.E_COMMERCE);
-       //Utilidades.enviarMensaje("Hola",Modules.E_COMMERCE, "Prueba","");
         //Utilidades.registerInterno(broker,"ulises","ulirodrigueze@gmail.com","123admin","Ulises","Rodriguez");
 
     }
